@@ -1,0 +1,9 @@
+# ignore backup copy
+
+clean_dataset copy/
+dataset_cleaning copy/
+
+# ignore notes
+
+*.txt
+key_metrics 
