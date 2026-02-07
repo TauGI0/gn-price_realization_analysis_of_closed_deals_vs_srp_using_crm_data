@@ -6,4 +6,5 @@ dataset_cleaning copy/
 # ignore notes
 
 *.txt
-key_metrics 
+key_metrics
+Key KPIs.md
