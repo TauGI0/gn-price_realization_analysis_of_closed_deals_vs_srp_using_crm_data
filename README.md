@@ -1,4 +1,4 @@
-# Price Realization Analysis of Won Opportunities Using CRM Sales Data
+# Price Realization Analysis of Closed Deals Using CRM Sales Data
 
 *This project evaluates pricing discipline by comparing actual won opportunity closed value against suggested retail pricing (SRP). The analysis examines pricing performance across sales representatives, products, and deal duration to identify key drivers of discounting and premium pricing.*
 
