@@ -1,9 +1,3 @@
-# ignore backup copy
+# ignote notes
 
-clean_dataset copy/
-dataset_cleaning copy/
-
-# ignore notes
-
-*.txt
-key_metrics 
+Key KPIs.md
