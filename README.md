@@ -21,5 +21,11 @@ This analysis focuses exclusively on **closed opportunities** to ensure insights
 2. Are certain products more likely to be sold at a premium or at a discount relative to SRP?
 3. Does deal duration influence pricing outcomes, such as increased discounting or premium pricing?
 
+---
+
+## Dataset Overview
+
+**Source:** 
+
 
 
