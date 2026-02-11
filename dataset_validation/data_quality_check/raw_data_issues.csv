@@ -1,0 +1,7 @@
+dataset,column,issue,details,action,status
+accounts,account,Inconsistent Formatting,The first letter of the value is not capitalized.,Standardize the account names to have the first letter capitalized.,Resolved
+accounts,sector,Spelling inconsistency,Found 'technolgy' instead of 'technology',standardize spelling,Resolved
+accounts,sector,Inconsistent Formatting,The first letter of the value is not capitalized.,Standardize the sector names to have the first letter capitalized.,Resolved
+accounts,office_location,Spelling inconsistency,Found 'Philipines' instead of 'Philippines',standardize spelling,Resolved
+sales_pipeline,product,Inconsistent Formatting,Product value 'GTXPro' is missing a space between 'GTX' and 'Pro'.,Standardize product name to 'GTX Pro'.,Resolved
+sales_pipeline,account,Inconsistent Formatting,The first letter of the value 'dambase' is not capitalized.,Standardize the account names to have the first letter capitalized.,Resolved
