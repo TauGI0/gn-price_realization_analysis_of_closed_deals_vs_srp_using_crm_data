@@ -35,12 +35,12 @@ This analysis focuses exclusively on **closed opportunities** to ensure insights
 
 ## 3. Methodology
 
-### 3.1 Data Validation  
+### 3.1 Data Quality Check
 
 Before performing any cleaning operations, the dataset was reviewed to assess its overall quality and identify issues requiring correction.  
 
 A full walkthrough of the initial validation process is available here:  
-**[Detailed Validation Steps – Data Quality Check](https://github.com/TauGI0/gn-price_realization_analysis_of_closed_deals_vs_srp_using_crm_data/tree/master/dataset_validation/data_quality_check)**  
+**[Detailed Validation Steps](https://github.com/TauGI0/gn-price_realization_analysis_of_closed_deals_vs_srp_using_crm_data/tree/master/dataset_validation/data_quality_check)**  
 
 **Key findings:**  
 
@@ -49,16 +49,6 @@ A full walkthrough of the initial validation process is available here:
 - Product names showed formatting inconsistencies (e.g., missing spaces between words).  
 
 These findings guided the subsequent data-cleaning procedures.  
-
-After the cleaning process, a second round of validation was conducted to verify the relational integrity between the fact and dimension tables.  
-
-A full walkthrough of this validation process is available here:  
-**[Detailed Validation Steps – Relational Integrity Check](https://github.com/TauGI0/gn-price_realization_analysis_of_closed_deals_vs_srp_using_crm_data/blob/master/dataset_validation/relational_integrety_check/sql_validation.md)**  
-
-**Key findings:**  
-
-- No orphaned foreign keys were found in the fact table.  
-- Five (5) agents were identified with no corresponding records in the cleaned fact table (closed deals only).
 
 ### 3.2 Data Cleaning  
 
@@ -94,82 +84,65 @@ Examples of corrections:
 
 ### 3.3 Data Transformation & Feature Engineering  
 
-After data cleaning, additional transformation and feature engineering steps were performed to prepare the dataset for pricing and sales cycle analysis.
+After data cleaning, additional transformation and feature engineering steps were performed to prepare the dataset for pricing and sales cycle analysis.  
 
-These steps focused on:
-
-- Filtering relevant records  
-- Standardizing outcome labels  
-- Creating derived analytical metrics within the fact table  
+These included filtering relevant records, standardizing outcome labels, and creating derived metrics in the fact table.
 
 #### 3.3.1 Outcome Standardization and Record Filtering  
 
-To ensure analytical consistency:
+- Retained only deals with outcomes **Won** or **Lost**.  
+- Renamed `deal_stage` to `deal_outcome` for clarity.  
 
-- The dataset was filtered to retain only deals with outcomes classified as **Won** or **Lost**.
-- The `deal_stage` column was renamed to `deal_outcome` for clarity and semantic accuracy.
+This ensures only finalized deals are analyzed and avoids distortion from ongoing or undefined stages.
 
-This ensures that:
-- The dataset reflects finalized deal outcomes only.
-- Ongoing or undefined stages do not distort pricing and duration analysis.
+#### 3.3.2 Deal Duration Metrics  
 
-#### 3.3.2 Deal Duration Calculation  
+- **deal_duration:** Number of days between `engage_date` and `close_date`.  
+- **deal_duration_bucket:** Categorized durations into months for grouped analysis:  
+  - 0–1, 2, 3–4, 5+ months  
 
-To measure sales cycle efficiency, a new metric was created:
+These metrics support sales cycle analysis and dashboard aggregation.
 
-- **deal_duration**  
+#### 3.3.3 Price Adjustment Percentage  
 
-This metric calculates the number of days between:
-- `engage_date` (deal initiation)
-- `close_date` (deal completion)
-
-Duration is computed as:
-
-> deal_duration = close_date − engage_date  
-
-This enables analysis of how long deals take to close.
-
-#### 3.3.3 Deal Duration Bucketing  
-
-To support grouped analysis and visualization, deal duration was further categorized into time-based buckets.
-
-Steps performed:
-
-1. Deal duration (in days) was converted into approximate months.
-2. Duration values were grouped into defined ranges.
-
-Bucket structure:
-
-- 0–1 month  
-- 2 months  
-- 3–4 months  
-- 5+ months  
-
-This enables:
-- Aggregated performance comparison across deal cycle segments  
-- Faster reporting and dashboard summarization  
-
-#### 3.3.4 Price Adjustment Percentage  
-
-To measure pricing discipline and realization performance, a new metric was created:
-
-- **price_adjustment_pct**
-
-This metric compares the actual deal close value against the product’s Suggested Retail Price (SRP).
-
-Calculation logic:
+- **price_adjustment_pct:** Measures the difference between actual deal value and product SRP:  
 
 > price_adjustment_pct = (closed_value − SRP) / SRP  
 
-Interpretation:
+- Positive → Sold above SRP  
+- Negative → Sold below SRP  
+- Zero → Sold at SRP  
 
-- Positive value → Sold above SRP (premium pricing)  
-- Negative value → Sold below SRP (discounting)  
-- Zero → Sold exactly at SRP  
+This metric is the core variable for analyzing pricing realization.
 
-This metric serves as the core variable for the price realization analysis.
+### 3.4 Data Modeling & Implementation    
+
+After preparing the dataset, a relational database was implemented to support structured storage and analytical queries.
+
+**Key Steps**
+
+- **Database and Tables:** Created fact and dimension tables following a star schema. Fact table stores deal transactions; dimension tables store reference data like products, accounts, and sales team members.  
+- **Data Loading:** Datasets were loaded into the respective tables with proper data types and constraints.  
+- **Foreign Key Mapping:** String-based keys in the fact table were replaced with surrogate integer keys referencing the dimension tables. This ensures faster joins, consistent references, and referential integrity.
+
+SQL scripts for setting up the database is available here:  
+**[Database Table Creation & Foreign Key Mapping](https://github.com/TauGI0/gn-price_realization_analysis_of_closed_deals_vs_srp_using_crm_data/tree/master/database)**
+
+### 3.5 Relational Integrety Check 
+
+After loading the cleaned and transformed datasets into the database, a second round of validation was conducted to verify the relational integrity between the fact and dimension tables.  
+
+Validation scripts is available here:  
+**[Relational Integrity Check](https://github.com/TauGI0/gn-price_realization_analysis_of_closed_deals_vs_srp_using_crm_data/blob/master/dataset_validation/relational_integrety_check/sql_validation.md)**  
+
+**Key findings:**  
+
+- No orphaned foreign keys were found in the fact table.  
+- All surrogate key mappings in the fact table are consistent with the dimension tables.  
+- Referential integrity between fact and dimension tables was successfully enforced.
 
 --- 
+
 
 
 
