@@ -16,7 +16,7 @@ CREATE TABLE fact_sales_pipeline (
     price_adjustment_pct NUMERIC(6,5)
 );
 
-
+-- Insert data into fact_sales_pipeline by joining staging table with dimension tables to get surrogate keys
 INSERT INTO fact_sales_pipeline (
     opportunity_id,
     agent_id,
