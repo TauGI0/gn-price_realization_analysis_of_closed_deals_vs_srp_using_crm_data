@@ -15,7 +15,7 @@
 
 Sales leadership currently has limited visibility into how actual won opportunity prices compare to suggested retail pricing. This gap makes it difficult to assess pricing discipline, identify margin leakage, and understand where discounting or premium pricing behaviors occur.
 
-This analysis focuses exclusively on **closed opportunities** to ensure insights are based on realized revenue rather than pipeline or lost deals.
+This analysis focuses exclusively on **closed opportunities** to ensure insights are based on realized revenue.
 
 ### 1.2 Key Business Questions
 
@@ -113,7 +113,10 @@ These metrics support sales cycle analysis and dashboard aggregation.
 - Negative → Sold below SRP  
 - Zero → Sold at SRP  
 
-This metric is the core variable for analyzing pricing realization.
+This metric is the core variable for analyzing pricing realization. 
+
+**Important Note:**  
+Records with a `Lost` deal_outcome have a `closed_value` of `0` by dataset design. This does **not** indicate that the product was sold at SRP. Instead, it reflects that the deal was not realized. Therefore, pricing analysis using `price_adjustment_pct` is restricted to `Won` deals to prevent distortion in aggregate metrics such as averages.
 
 ### 3.4 Data Modeling & Implementation    
 
@@ -140,6 +143,12 @@ Validation scripts is available here:
 - No orphaned foreign keys were found in the fact table.  
 - All surrogate key mappings in the fact table are consistent with the dimension tables.  
 - Referential integrity between fact and dimension tables was successfully enforced.
+
+### 3.5 Data Analysis
+
+
+
+### 3.6 Data Visualization
 
 --- 
 
