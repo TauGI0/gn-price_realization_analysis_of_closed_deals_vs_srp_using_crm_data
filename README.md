@@ -153,6 +153,8 @@ The core business questions (BQ01–BQ03) were first analyzed in SQL before crea
 - **Method:** Compute `AVG(price_adjustment_pct)` for Won deals only.
 - **Purpose:** Ensures Lost deals do not distort the average and allows ranking agents accurately.
 
+**Note:** Each agent’s average is based on 55–349 Won deals. This sample size is large enough to produce a stable, reliable metric of an agent’s true pricing performance, minimizing the effect of unusually high or low deals.
+
 **BQ02 – Pricing Realization by Product**
 - **Objective:** Identify products sold at a premium or discount.
 - **Method:** Compute `AVG(price_adjustment_pct)` by product for Won deals only.
