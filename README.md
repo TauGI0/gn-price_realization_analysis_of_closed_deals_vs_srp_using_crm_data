@@ -146,7 +146,24 @@ Validation scripts is available here:
 
 ### 3.5 Data Analysis
 
+The core business questions (BQ01–BQ03) were first analyzed in SQL before creating visuals in Power BI. Doing the analysis in SQL ensures metrics are consistent, reproducible, and auditable, serving as a reference of truth for values shown in Power BI.
 
+**BQ01 – Pricing Realization by Sales Agent**
+- **Objective:** Assess agent pricing performance relative to SRP.
+- **Method:** Compute `AVG(price_adjustment_pct)` for Won deals only.
+- **Purpose:** Ensures Lost deals do not distort the average and allows ranking agents accurately.
+
+**BQ02 – Pricing Realization by Product**
+- **Objective:** Identify products sold at a premium or discount.
+- **Method:** Compute `AVG(price_adjustment_pct)` by product for Won deals only.
+- **Purpose:** Standardizes product-level pricing analysis and highlights systematic pricing patterns.
+
+**BQ03 – Deal Duration vs Pricing Outcomes**
+- **Objective:** Determine if deal duration affects pricing.
+- **Method:** Compute `CORR(deal_duration, price_adjustment_pct)` for Won deals.
+- **Purpose:** Quantifies the linear relationship before visualization.
+
+SQL ensures all business logic is applied consistently and independently of visualization.
 
 ### 3.6 Data Visualization
 
