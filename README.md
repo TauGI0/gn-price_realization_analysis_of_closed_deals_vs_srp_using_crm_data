@@ -168,6 +168,8 @@ SQL ensures all business logic is applied consistently and independently of visu
 
 ### 3.6 Data Visualization
 
+Going back to the business problem, this project is a ongoing visibility problem, where procing discipline should be monitored regularly. Hence, and interactive dashboard will be use to visualize the results of the analysis.
+
 --- 
 
 
