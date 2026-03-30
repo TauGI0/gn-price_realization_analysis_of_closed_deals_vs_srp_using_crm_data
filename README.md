@@ -137,7 +137,7 @@ After loading the cleaned and transformed datasets into the database, a second r
 Validation scripts is available here:  
 **[Relational Integrity Check](https://github.com/TauGI0/gn-price_realization_analysis_of_closed_deals_vs_srp_using_crm_data/blob/master/dataset_validation/relational_integrety_check/sql_validation.md)**  
 
-**Key findings:**  
+**Key findings**  
 
 - No orphaned foreign keys were found in the fact table.  
 - All surrogate key mappings in the fact table are consistent with the dimension tables.  
@@ -168,9 +168,40 @@ SQL ensures all business logic is applied consistently and independently of visu
 
 ### 3.6 Data Visualization
 
-Going back to the business problem, this project is a ongoing visibility problem, where procing discipline should be monitored regularly. Hence, and interactive dashboard will be use to visualize the results of the analysis.
+An interactive Power BI dashboard was developed to support ongoing monitoring of pricing discipline across closed deals. The dashboard is contained in a single page, with drill-through functionality enabling deeper exploration without navigating away from the main view.
+
+**Dashboard Structure**
+
+The main overview page provides a high-level summary of pricing realization across all closed opportunities. It includes the following visualizations:
+
+- **KPI Cards** — Summarize key aggregate metrics for closed Won deals, including `average price adjustment percentage`, `percentage of Won deals above SRP`, `percentage of Won deals below SRP`, and `total revenue`. Together these provide an at-a-glance assessment of pricing discipline, discounting behavior, and margin leakage.
+- **Average Price Adjustment Percentage by Agent Lollipop Chart** — Ranks all sales agents who handled a deal by their average `price_adjustment_pct`, highlighting pricing behavior across the team.
+- **Opportunity Distribution Chart (Clustered Bar Chart)** — Displays the breakdown of Won and Lost deals by agent, providing context for individual pricing performance.
+- **Average Price Adjustment Percentage by Product Lollipop Chart** — Ranks products by average `price_adjustment_pct` for Won deals, plotted on a diverging axis centered at zero. Products extending to the right indicate consistent premium pricing above SRP; those extending to the left indicate systematic discounting. This directly addresses BQ02.
+- **Scatter Plot (Deal Duration vs. Price Adjustment)** — Plots individual Won deals to visualize the relationship between deal duration and pricing outcome.
+
+A slicer panel is available allowing users to filter the dashboard by period (Q1–Q4), agent, and product, enabling targeted analysis across different segments.
+
+**DAX Measures**
+
+Custom DAX measures were written to ensure metrics are calculated within the correct scope and consistent with the SQL-based analysis in Section 3.5. This prevents Lost deal records — which carry a `closed_value` of 0 by dataset design — from distorting aggregate averages.
+
+**Calculated Column**
 
 --- 
+
+## 4. Result
+
+The dashboard reveals that overall pricing realization across closed Won deals is marginally below SRP, indicating a slight but measurable degree of discounting across the sales team. While realized revenue remains substantial, the SRP-based variance indicator on the Total Revenue KPI confirms a small margin leakage.
+
+### 4.1 BQ1
+
+(Comming soon)
+
+### 4.2 BQ2
+
+### 4.3 BQ3
+
 
 
 
