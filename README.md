@@ -96,9 +96,7 @@ This ensures only finalized deals are analyzed and avoids distortion from ongoin
 
 #### 3.3.2 Deal Duration Metrics  
 
-- **deal_duration:** Number of days between `engage_date` and `close_date`.  
-- **deal_duration_bucket:** Categorized durations into months for grouped analysis:  
-  - 0–1, 2, 3–4, 5+ months  
+- **deal_duration:** Number of days between `engage_date` and `close_date`. 
 
 These metrics support sales cycle analysis and dashboard aggregation.
 
@@ -170,6 +168,8 @@ SQL ensures all business logic is applied consistently and independently of visu
 
 An interactive Power BI dashboard was developed to support ongoing monitoring of pricing discipline across closed deals. The dashboard is contained in a single page, with drill-through functionality enabling deeper exploration without navigating away from the main view.
 
+![Fullview](misc/dboard_fullview.png)
+
 **Dashboard Structure**
 
 The main overview page provides a high-level summary of pricing realization across all closed opportunities. It includes the following visualizations:
@@ -186,22 +186,161 @@ A slicer panel is available allowing users to filter the dashboard by period (Q1
 
 Custom DAX measures were written to ensure metrics are calculated within the correct scope and consistent with the SQL-based analysis in Section 3.5. This prevents Lost deal records — which carry a `closed_value` of 0 by dataset design — from distorting aggregate averages.
 
-**Calculated Column**
+A full list of DAX measures with definitions is available here:
+**[DAX Measures](https://github.com/TauGI0/gn-price_realization_analysis_of_closed_deals_vs_srp_using_crm_data/tree/dev/dataset_reporting/dax_measures.md)**
 
 --- 
 
-## 4. Result
+## 4. Results
 
-The dashboard reveals that overall pricing realization across closed Won deals is marginally below SRP, indicating a slight but measurable degree of discounting across the sales team. While realized revenue remains substantial, the SRP-based variance indicator on the Total Revenue KPI confirms a small margin leakage.
+The dashboard reveals that pricing discipline across closed Won deals is marginally below SRP on average, with meaningful variation at both the agent and product level. Overall, the realized revenue is **0.18% below SRP-implied revenue**, indicating modest but measurable margin leakage at the portfolio level.
 
-### 4.1 BQ1
+![KPI Metrics](misc/dboard_kpi.png)
 
-(Comming soon)
+### 4.1 Pricing Performance by Sales Agent (BQ01)
 
-### 4.2 BQ2
+Pricing performance varies notably across the sales team. The average `price_adjustment_pct` across all Won deals is **-0.35%**, indicating a slight overall discount tendency. However, agent-level analysis reveals a clear split between those consistently pricing above SRP and those driving the discount average down.
 
-### 4.3 BQ3
+- The **top-performing agents** (e.g., Daniell Hammack, Rosalina Dieter) achieved positive price adjustments, selling Won deals at a premium relative to SRP.
+- The **lowest-performing agents** (e.g., Lajuana Voncill, Garrot Kinder) showed the largest negative adjustments, consistently closing deals below SRP.
+- The majority of agents cluster near 0%, suggesting most pricing behavior is close to SRP with a slight downward skew.
 
+![Fullview](misc/dboard_avg_adjustment_agent.png)
+
+> **Note:** An agent's average `price_adjustment_pct` and their `Total Revenue Variance %` against SRP-implied revenue may not always point in the same direction. An agent with a negative average adjustment can still generate revenue above the SRP-implied baseline if a small number of high-value deals were closed at a significant premium, offsetting a larger volume of discounted deals.
+
+### 4.2 Pricing Realization by Product (BQ02)
+
+Product-level pricing shows a consistent pattern — premium and discount behavior is not evenly distributed across the portfolio.
+
+- **MG Special** and **GTX Plus Pro** are the only products consistently sold above SRP, indicating strong market positioning or higher perceived value for these products.
+- **GTX Plus Basic** and **GTX Basic** show the largest negative adjustments, suggesting these products are most susceptible to discounting — likely due to competitive pressure or lower perceived differentiation.
+- Mid-tier products (**GTX Pro**, **MG Advanced**, **GTX 500**) cluster slightly below SRP, contributing to the overall negative average.
+
+![Fullview](misc/dboard_avg_adjustment_product.png)
+
+### 4.3 Deal Duration and Pricing Outcomes (BQ03)
+
+The Pearson correlation coefficient between deal duration and `price_adjustment_pct` is **r = -0.02**, indicating virtually no linear relationship between how long a deal takes to close and whether it is priced above or below SRP.
+
+- The scatter plot confirms this — data points are evenly distributed around the 0% baseline regardless of deal duration, with no visible directional trend.
+- Deal duration ranges from 0 to ~140 days, yet pricing outcomes remain similarly dispersed across the full range.
+- The trend line is nearly flat, consistent with the computed r value.
+
+**In plain terms: deal duration does not meaningfully predict pricing outcomes.** Whether a deal closes in days or months has no practical bearing on whether the agent sells above or below SRP.
+
+![Fullview](misc/dboard_duration_adjustmer_correlation.png)
+
+---
+
+## 5. Conclusion and Recommendations
+
+Overall, pricing is slightly below SRP — the average price adjustment across all Won deals is **-0.35%**, and realized revenue came in **0.18% below what would have been earned if every deal closed at SRP**. The gap is small at the portfolio level, but agent and product breakdowns reveal areas that need attention.
+
+### 5.1 Overall Pricing Discipline
+
+**Finding:** More than half of Won deals (50.33%) closed below SRP. Only 48.14% closed above, and ~2% closed exactly at SRP.
+
+**Recommendation:** Set a clear pricing target — such as at least 50% of Won deals at or above SRP — and track it regularly using the dashboard.
+
+### 5.2 Pricing Performance by Sales Agent
+
+**Finding:** Pricing performance varies widely across agents. Two metrics are needed to get the full picture:
+
+- **Avg Price Adjustment %** — how much an agent prices above or below SRP on a typical deal
+- **Total Revenue Variance %** — the actual dollar impact compared to SRP-implied revenue
+
+These two can tell different stories for the same agent. An agent with a negative average adjustment can still generate revenue above the SRP baseline if they close a few high-value deals at a premium. The reverse is also true — a positive average adjustment does not guarantee strong revenue performance if the agent primarily handles low-priced products.
+
+The key driver of this disconnect is **product mix**. Discounting a $26,768 product (GTK 500) by 1% costs $267 per deal. Discounting a $55 product (MG Special) by the same amount costs less than $1. Agents handling high-SRP products have far greater revenue impact per deal — in either direction.
+
+**Recommendation:** Evaluate agents on both metrics together. Focus coaching on agents who are negative on both — they are discounting frequently and it is showing up in revenue. For agents negative on average adjustment but positive on revenue variance, monitor but deprioritize. Avoid applying blanket pricing policies without considering each agent's product mix.
+
+### 5.3 Pricing Realization by Product
+
+**Finding:** MG Special and GTX Plus Pro are consistently sold above SRP. GTX Plus Basic and GTX Basic are the most discounted. The revenue risk of discounting scales with product price:
+
+| Product | Series | SRP |
+|---|---|---|
+| GTK 500 | GTK | $26,768 |
+| GTX Plus Pro | GTX | $5,482 |
+| GTX Pro | GTX | $4,821 |
+| MG Advanced | MG | $3,393 |
+| GTX Plus Basic | GTX | $1,096 |
+| GTX Basic | GTX | $550 |
+| MG Special | MG | $55 |
+
+MG Special's consistent premium pricing is worth noting — its low price point likely reduces buyer resistance, making it easier for agents to close above SRP.
+
+**Recommendation:** Apply stricter discount controls on high-SRP products where the per-deal revenue impact is largest. For low-SRP products like GTX Basic, consider whether the SRP itself needs to be revised rather than enforcing tighter discount policies.
+
+### 5.4 Deal Duration and Pricing Outcomes
+
+**Finding:** Deal duration has no meaningful impact on pricing outcomes (r = -0.02). Short deals and long deals show the same spread of pricing behavior.
+
+**Recommendation:** Do not assume longer deals need bigger discounts to close — the data does not support this. Focus discount decisions on product type and agent behavior instead.
+
+### 5.5 Summary
+
+| Area | Finding | Recommendation |
+|---|---|---|
+| Overall Pricing | 50.33% of deals below SRP; -0.35% avg adjustment | Set a pricing benchmark and monitor via dashboard |
+| Agent Performance | Avg adjustment and revenue variance can tell different stories depending on product mix | Evaluate both metrics together; coach agents negative on both |
+| Product Pricing | High-SRP products carry the greatest per-deal margin risk | Tier discount controls by SRP; recalibrate SRP for low-value discounted products |
+| Deal Duration | r = -0.02; no relationship with pricing outcomes | No action needed |
+
+---
+
+## 6. Challenges and Learnings
+
+---
+
+### 6.1 Ambiguous Zero Values in Lost Deal Records
+
+**Challenge:**  
+The initial `Avg Price Adjustment %` measure was calculated across all closed deals without filtering for outcome. Lost deals carry a `closed_value` of 0 by dataset design, which produces a `price_adjustment_pct` of 0. This created an ambiguity — a value of 0 could mean either the deal closed exactly at SRP, or the deal was lost and never realized. Including Lost deals in the average silently pulled the metric toward zero, understating the true average for Won deals.
+
+**Fix:**  
+All pricing measures were scoped exclusively to Won deals using a `deal_outcome = "Won"` filter in DAX. This ensures 0 values in the average exclusively represent deals closed at SRP.
+
+**Learning:**  
+When a single value can carry more than one meaning depending on context, it is a data design issue that must be addressed before analysis. In this case, the cleaner long-term fix is to assign a distinct placeholder — such as `NULL` — to Lost deal `closed_value` records instead of 0, so the two cases are unambiguous at the data level. This is something to enforce at the data modeling stage in future projects rather than working around it in DAX.
+
+---
+
+### 6.2 Incorrect Arrow Direction on Revenue Variance Indicator
+
+**Challenge:**  
+The `Total Revenue Variance Arrow` measure produced incorrect arrow directions for certain agents. Some agents with a negative average `price_adjustment_pct` displayed an upward arrow, while others with a positive average showed a downward arrow. Initial debugging pointed to filter context issues and rounding, but these did not resolve the problem.
+
+**Fix:**  
+The root cause turned out to be a conceptual one rather than a technical one. The arrow direction was correct — the issue was with the color indicator, which was configured to match the arrow symbol text (`▲` / `▼`) using conditional formatting rules. Unicode rendering differences between what the DAX measure output and what was typed into the formatting rule caused mismatches for specific agents. The fix was to decouple color from the arrow symbol entirely — evaluating the color rule directly against `[Total Revenue Variance (%)]` instead of matching the arrow string.
+
+**Learning:**  
+Color and direction indicators should always be evaluated independently from the same underlying numeric measure. Relying on symbol string matching for conditional formatting is fragile and difficult to debug. This also surfaced an important analytical insight: an agent's average price adjustment and their revenue variance can point in opposite directions depending on their product mix, which is expected and correct behavior — not a bug.
+
+**Room for Improvement:**  
+Future dashboards should avoid using concatenated text measures as the basis for conditional formatting. Where possible, use numeric measures directly as the formatting field to eliminate encoding and rendering dependencies.
+
+---
+
+### 6.3 Incorrect Colors and Dulled Bars on Cross-Filter
+
+**Challenge:**  
+When filtering by agent or product, other visuals exhibited two problems: bars were partially dulled out (Power BI's default highlight behavior), and conditional colors were not updating correctly — negative values were displaying in the positive color and vice versa.
+
+**Fix:**  
+Both issues were resolved by switching the cross-filter interaction mode from **Highlight** to **Filter** for all visual pairs via Format → Edit Interactions. In Highlight mode, Power BI overlays the filtered value on top of the full bar while muting unrelated data, which bypasses conditional formatting re-evaluation. Switching to Filter mode forces the visual to re-render entirely based on the filtered dataset, restoring correct colors and removing the dulled bar effect.
+
+**Learning:**  
+Power BI's default Highlight interaction mode is useful for showing context but is incompatible with conditional formatting that depends on the current filter context. For dashboards where color carries analytical meaning — such as positive vs. negative pricing indicators — Filter mode should be the default interaction setting, not Highlight.
+
+**Room for Improvement:**  
+At the start of future Power BI projects, set all cross-filter interactions to Filter mode by default and only revert to Highlight where explicitly needed. This prevents conditional formatting issues from appearing late in development when visuals are already built and interconnected.
+
+---
+
+*GN - 2026*
 
 
 
