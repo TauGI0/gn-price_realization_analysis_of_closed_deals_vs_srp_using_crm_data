@@ -187,7 +187,7 @@ A slicer panel is available allowing users to filter the dashboard by period (Q1
 Custom DAX measures were written to ensure metrics are calculated within the correct scope and consistent with the SQL-based analysis in Section 3.5. This prevents Lost deal records — which carry a `closed_value` of 0 by dataset design — from distorting aggregate averages.
 
 A full list of DAX measures with definitions is available here:
-**[DAX Measures](https://github.com/TauGI0/gn-price_realization_analysis_of_closed_deals_vs_srp_using_crm_data/tree/dev/dataset_reporting/dax_measures.md)**
+**[DAX Measures](https://github.com/TauGI0/gn-price_realization_analysis_of_closed_deals_vs_srp_using_crm_data/tree/master/dataset_reporting/dax_measures.md)**
 
 --- 
 
@@ -293,8 +293,6 @@ MG Special's consistent premium pricing is worth noting — its low price point 
 
 ## 6. Challenges and Learnings
 
----
-
 ### 6.1 Ambiguous Zero Values in Lost Deal Records
 
 **Challenge:**  
@@ -305,8 +303,6 @@ All pricing measures were scoped exclusively to Won deals using a `deal_outcome 
 
 **Learning:**  
 When a single value can carry more than one meaning depending on context, it is a data design issue that must be addressed before analysis. In this case, the cleaner long-term fix is to assign a distinct placeholder — such as `NULL` — to Lost deal `closed_value` records instead of 0, so the two cases are unambiguous at the data level. This is something to enforce at the data modeling stage in future projects rather than working around it in DAX.
-
----
 
 ### 6.2 Incorrect Arrow Direction on Revenue Variance Indicator
 
@@ -321,8 +317,6 @@ Color and direction indicators should always be evaluated independently from the
 
 **Room for Improvement:**  
 Future dashboards should avoid using concatenated text measures as the basis for conditional formatting. Where possible, use numeric measures directly as the formatting field to eliminate encoding and rendering dependencies.
-
----
 
 ### 6.3 Incorrect Colors and Dulled Bars on Cross-Filter
 
