@@ -4,6 +4,8 @@
 
 **Prepared by:** Gio Noga  
 
+**Tech Stack:** Python, SQL, PostgreSQL, Power BI, DAX
+
 **Dataset Source:** [CRM🚀 + Sales📊 + Opportunities🔖](https://www.kaggle.com/datasets/innocentmfa/crm-sales-opportunities)
 
 ---
@@ -121,7 +123,7 @@ After preparing the dataset, a relational database was implemented to support st
 
 **Key Steps**
 
-- **Database and Tables:** Created fact and dimension tables following a star schema. Fact table stores deal transactions; dimension tables store reference data like products, accounts, and sales team members.  
+- **Database and Tables:** Created fact and dimension tables following a star schema using PostgreSQL, managed locally via pgAdmin. Fact table stores deal transactions; dimension tables store reference data like products, accounts, and sales team members.  
 - **Data Loading:** Datasets were loaded into the respective tables with proper data types and constraints.  
 - **Foreign Key Mapping:** String-based keys in the fact table were replaced with surrogate integer keys referencing the dimension tables. This ensures faster joins, consistent references, and referential integrity.
 
